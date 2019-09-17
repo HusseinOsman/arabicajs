@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
+// bin/www.js
 /**
  * Module dependencies.
  */
-
-var app = require('../app');
-var debug = require('debug')('arabicajs:server');
-var http = require('http');
+import app from '../app';
+import debugLib from 'debug';
+import http from 'http';
+const debug = debugLib('express-es6:server');
+// generated code below.
 
 /**
  * Get port from environment and store in Express.
