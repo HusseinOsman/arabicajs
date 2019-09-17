@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  api:
+    build:
+      context: ./
+      dockerfile: .docker/Dockerfile
+    volumes:
+      - .:/api
+      - /api/node_modules
+    environment:
+      - PORT
+      - CERT_PATH
+      - KEY_PATH
+    ports:
+      - "${PORT}:${PORT}"
