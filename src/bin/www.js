@@ -7,6 +7,8 @@
 import app from '../app';
 import debugLib from 'debug';
 import http from 'http';
+import config from '../config/app';
+
 const debug = debugLib('express-es6:server');
 // generated code below.
 
@@ -14,7 +16,7 @@ const debug = debugLib('express-es6:server');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(config.port);
 app.set('port', port);
 
 /**
@@ -89,4 +91,5 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+  console.info(`the server running on ${config.port}`);
 }

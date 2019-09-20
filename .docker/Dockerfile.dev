@@ -1,0 +1,18 @@
+FROM node:10.16.3-alpine
+
+# Update alpine packages
+# RUN apk update 
+
+RUN  mkdir /api
+
+COPY . /api
+
+# Enter api dir
+WORKDIR /api
+
+# Create empty .env file
+RUN npm install
+
+RUN npm install -g nodemon
+
+CMD npm run watch
