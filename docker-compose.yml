@@ -25,6 +25,9 @@ services:
       - ME_CONFIG_MONGODB_ADMINPASSWORD
       - CERT_PATH
       - KEY_PATH
+      - JWT_SECRET
+      - JWT_EXPIRES_IN
+      - JWT_ISSUER
     ports:
       - "${PORT}:${PORT}"
   db:

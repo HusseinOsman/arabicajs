@@ -7,7 +7,7 @@
 import app from '../app';
 import debugLib from 'debug';
 import http from 'http';
-import config from '../config/app';
+import config from '../config/env';
 
 const debug = debugLib('express-es6:server');
 // generated code below.
@@ -92,4 +92,5 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
   console.info(`the server running on ${config.port}`);
+  console.info(`the server ENV Vars `,config);
 }

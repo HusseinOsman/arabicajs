@@ -12,6 +12,10 @@ class User extends Model {
         type: String,
         length: 255
       },
+      email: {
+        type: String,
+        length: 255
+      },
       created_at: {
         type: Date,
         default: function () {
@@ -28,7 +32,7 @@ class User extends Model {
 
     this.schema.models.model;
 
-    return new model();
+    return model;
   }
 
 }

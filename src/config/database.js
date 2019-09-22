@@ -1,6 +1,5 @@
 import jugglingdb from 'jugglingdb';
-import config from './app';
-let Schema = require('jugglingdb').Schema;
+import config from './env';
 let _schema = null;
 let _Schema = null;
 let _instance = null;
@@ -13,7 +12,7 @@ class Database {
 
             console.log("url=> ", url);
             _Schema = jugglingdb.Schema;
-            _schema = new Schema('mongodb', {
+            _schema = new _Schema('mongodb', {
                 url: url,
                 w: 1,
                 j: 1

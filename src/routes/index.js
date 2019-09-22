@@ -1,8 +1,9 @@
 // routes/index.js
 import express from 'express';
-import User from '../app/models/user';
-
-var router = express.Router();
+import AuthController from '../app/controllers/authController'
+import Authentication from '../app/middleware/authentication';
+const authController = new AuthController();
+let router = express.Router();
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -11,21 +12,14 @@ router.get('/', function (req, res, next) {
   });
 });
 
-router.post('/register', (req, res) => {
-  var post = new User();
-  post.name = "Arabica";
-  post.password = "arabica";
-  post.save((err, data) => {
-    console.log(err, data);
-    res.status(200).send({
-      data: data
-    });
-  });
-});
+router.post('/register', authController.register);
 
-router.post('/login', (req, res) => {
+router.post('/login', authController.login);
+
+router.get('/secure', Authentication.check, (req, res) => {
   res.status(200).send({
-    access_token: ''
+    success: true,
+    user: req.user
   });
 });
 
