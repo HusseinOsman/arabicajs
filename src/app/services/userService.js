@@ -1,11 +1,23 @@
 import User from '../models/user';
-const user = new User();
+import bcrypt from 'bcryptjs';
+
+const model = new User();
 
 class UserService {
-  constructor() {}
+  constructor() {
+    this.modelHooks();
+  }
+
+  modelHooks() {
+    model.beforeCreate = function (next, data) {
+      // use data argument to hash password
+      data.password = bcrypt.hashSync(data.password);
+      next();
+    };
+  }
 
   create(data, cb) {
-    const newUser = user();
+    const newUser = model();
     newUser.name = data[0];
     newUser.email = data[1];
     newUser.password = data[2];
@@ -16,18 +28,29 @@ class UserService {
   }
 
   findById(id, cb) {
-    user.find(id, function (err, data) {
+    model.find(id, function (err, data) {
       cb(err, data)
     });
   }
 
   findByEmail(email, cb) {
-    user.findOne({
+    model.findOne({
       where: {
         email: email
       }
     }, function (err, data) {
       cb(err, data)
+    });
+  }
+
+  updateSessions(id, session, cb) {
+    model.find(id, function (err, data) {
+      let sessions = data.sessions || [];
+      sessions.push(session);
+      data.sessions = sessions;
+      return data.save((err, updated) => {
+        cb(err, updated);
+      });
     });
   }
 
