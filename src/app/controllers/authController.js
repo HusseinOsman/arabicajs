@@ -28,7 +28,8 @@ class AuthController extends Controller {
       const options = JWT.options();
       const session = {
         token: token,
-        'user-agent': req.header('user-agent')
+        'user-agent': req.header('user-agent'),
+        'ip': req.header('x-forwarded-for') || req.connection.remoteAddress
       }
       userService.updateSessions(user.id, session, (err, updated) => {
         res.status(200).send({
