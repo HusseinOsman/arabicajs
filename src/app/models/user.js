@@ -28,6 +28,9 @@ class User extends Model {
           return new Date;
         }
       },
+      sessions: {
+        type: Object
+      },
     });
 
     this.schema.models.model;
