@@ -1,36 +1,41 @@
 import Controller from '../../core/controller';
 import UserService from '../services/userService'
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import Env from '../../config/env';
-const userService = new UserService();
-const SECRET_KEY = 'secretkey23456';
+import JWT from '../helper/jwt';
 
-class AuthController {
+const userService = new UserService();
+
+class AuthController extends Controller {
   constructor() {
-    //super();
+    super();
   }
 
   register(req, res) {
-    const name = req.body.name;
-    const email = req.body.email;
-    const password = bcrypt.hashSync(req.body.password);
+    const {
+      name,
+      email,
+      password
+    } = req.body;
 
     userService.create([name, email, password], (err, user) => {
       if (err) return res.status(500).send("Server error!");
-      console.log("created user", user)
-      const expiresIn = 24 * 60 * 60;
-      const accessToken = jwt.sign({
-        name: user.name,
-        id: user.id
-      }, Env.jwtSecret, {
-        expiresIn: Env.jwtExpiresIn,
-        issuer: Env.jwtIssuer
-      });
-      res.status(200).send({
-        "user": user,
-        "access_token": accessToken,
-        "expires_in": expiresIn
+      const payload = {
+        id: user.id,
+        user: user.name
+      };
+
+      const token = JWT.sign(payload);
+      const options = JWT.options();
+      const session = {
+        token: token,
+        'user-agent': req.header('user-agent')
+      }
+      userService.updateSessions(user.id, session, (err, updated) => {
+        res.status(200).send({
+          "user": user,
+          "token": token,
+          "expires_in": options.expiresIn
+        });
       });
     });
   }
@@ -48,15 +53,20 @@ class AuthController {
         id: user.id,
         user: user.name
       };
-      const options = {
-        expiresIn: Env.jwtExpiresIn,
-        issuer: Env.jwtIssuer
-      };
-      const token = jwt.sign(payload, Env.jwtSecret, options);
-      res.status(200).send({
-        "user": user,
-        "access_token": token,
-        "expires_in": options.expiresIn
+
+      const token = JWT.sign(payload);
+      const options = JWT.options();
+      const session = {
+        token: token,
+        'user-agent': req.header('user-agent')
+      }
+      userService.updateSessions(user.id, session, (err, updated) => {
+        console.log("(err,updated)", err, updated)
+        res.status(200).send({
+          "user": user,
+          "token": token,
+          "expires_in": options.expiresIn
+        });
       });
     });
   }
