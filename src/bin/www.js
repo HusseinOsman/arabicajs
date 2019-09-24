@@ -6,8 +6,11 @@
  */
 import app from '../app';
 import debugLib from 'debug';
+import https from 'https';
 import http from 'http';
 import config from '../config/env';
+import fs from 'fs';
+import env from '../config/env';
 
 const debug = debugLib('express-es6:server');
 // generated code below.
@@ -23,7 +26,17 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+// var server = https.createServer(app);
+// we will pass our 'app' to 'https' server
+let server;
+if(env.sslCert && env.sslKey){
+  server = https.createServer({
+    key : fs.readFileSync(env.sslKey),
+    cert : fs.readFileSync(env.sslCert)
+  },app);
+} else {
+  server = http.createServer(app);
+}
 
 /**
  * Listen on provided port, on all network interfaces.
