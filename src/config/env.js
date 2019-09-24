@@ -9,6 +9,8 @@ const Env = {
     "jwtSecret": process.env.JWT_SECRET || '',
     "jwtExpiresIn": process.env.JWT_EXPIRES_IN || '',
     "jwtIssuer": process.env.JWT_ISSUER || '',
+    "sslCert": process.env.CERT_PATH || '',
+    "sslKey": process.env.KEY_PATH || ''
 };
 
 export default Env;
