@@ -4,9 +4,9 @@ import AuthController from '../app/controllers/authController'
 import Authentication from '../app/middleware/authentication';
 const authController = new AuthController();
 let router = express.Router();
-import nodemailer from 'nodemailer';
 import Email from '../app/helper/email';
 const email = new Email();
+import response from '../app/helper/response';
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -19,7 +19,7 @@ router.post('/register', authController.register);
 
 router.post('/login', authController.login);
 
-router.get('/sendmail', Authentication.check, (req, res) => {
+router.get('/sendemail', Authentication.check, (req, res) => {
   // Message object
   let message = {
     from: 'Testing Email <web.developer4testing@gmail.com>',
@@ -51,13 +51,13 @@ router.get('/sendmail', Authentication.check, (req, res) => {
   });
 });
 
-router.get('/verifymail', Authentication.check, (req, res) => {
-  email.verify((err,success)=>{
-    res.status(200).send({
-          success: success,
-          user: req.user,
-          "err": err,
-        });
+router.get('/verifyemail', Authentication.check, (req, res) => {
+  email.verify((err, success) => {
+
+    if (err)
+      response.returnError(res, err);
+    response.returnData(res, success, "customData");
+
   });
 });
 
