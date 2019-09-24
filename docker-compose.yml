@@ -28,6 +28,11 @@ services:
       - JWT_SECRET
       - JWT_EXPIRES_IN
       - JWT_ISSUER
+      - EMAIL_USER
+      - EMAIL_PASS
+      - EMAIL_HOST
+      - EMAIL_PORT
+      - EMAIL_SECURE
     ports:
       - "${PORT}:${PORT}"
   db:
