@@ -19,7 +19,7 @@ router.post('/register', authController.register);
 
 router.post('/login', authController.login);
 
-router.get('/secure', Authentication.check, (req, res) => {
+router.get('/sendmail', Authentication.check, (req, res) => {
   // Message object
   let message = {
     from: 'Testing Email <web.developer4testing@gmail.com>',
@@ -48,7 +48,17 @@ router.get('/secure', Authentication.check, (req, res) => {
       user: req.user,
       "email": info
     });
-  })
+  });
+});
+
+router.get('/verifymail', Authentication.check, (req, res) => {
+  email.verify((err,success)=>{
+    res.status(200).send({
+          success: success,
+          user: req.user,
+          "err": err,
+        });
+  });
 });
 
 export default router;
