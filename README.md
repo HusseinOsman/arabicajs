@@ -35,7 +35,7 @@ $ npm run prod
 
 ## Compatibility
 
-Arabica is built on [Node.js](http://nodejs.org/), [Express](http://expressjs.com/)
+Arabica is built on [Node.js](http://nodejs.org/), [Express](http://expressjs.com/) with [ES6](https://www.w3schools.com/js/js_es6.asp) support
 
 
 The ORM, 
