@@ -4,7 +4,7 @@ Arabica.js is a web framework that makes it easy to build custom, enterprise-gra
 
 
 ## Installation By Docker-compose RECOMENDED &nbsp;
-**With [node](http://nodejs.org) [installed](http://nodejs.org/en/download):**
+**With [docker](https://www.docker.com/) [installed](https://docs.docker.com/install/) [compose](https://docs.docker.com/compose/install/):**
 ```sh
 # clone the latest stable release of arabicajs
 $ git clone https://github.com/HusseinOsman/arabicajs.git
