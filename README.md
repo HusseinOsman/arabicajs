@@ -168,7 +168,13 @@ Need help or have a question?
 ## Contribute
 
 ## Team
-[Hussein Osman](http://github.com/HusseinOsman) 
+[![Hussein Osman](https://s.gravatar.com/avatar/621333958991bfd79d943adda71acabb)](https://www.linkedin.com/in/husseinosman86/) |   |   |   |   |  
+:---:|:---:|:---:|:---:|:---:
+[Hussein Osman](http://github.com/HusseinOsman) | |  |  |  |
+ | | |
+ | | |
+ | | |
+
 
 ## License
 [MIT License](https://opensource.org/licenses/MIT)  Copyright © 2019-present
