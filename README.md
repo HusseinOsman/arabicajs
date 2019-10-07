@@ -81,7 +81,7 @@ check following list of available adapters
   <tbody>
     <!-- MongoDB -->
     <tr>
-      <td><a href="https://github.com/balderdashy/sails-mongo"><img width="16" height="16" src="https://camo.githubusercontent.com/9e49073459ed4e0e2687b80eaf515d87b0da4a6b/687474703a2f2f62616c64657264617368792e6769746875622e696f2f7361696c732f696d616765732f6c6f676f2e706e67" style="vertical-align:middle" alt="sails-mongo" /></a> MongoDB</td>
+      <td><a href="http://www.mongodb.org"><img width="16" height="16" src="https://www.mongodb.com/assets/images/global/favicon.ico" alt="MongoDB" /></a> MongoDB</td>
       <td><a href="https://github.com/balderdashy/sails-mongo">sails-mongo</a></td>
       <td><a href="https://github.com/mikermcneil">Mike McNeil</a></td>
       <td><a href="https://travis-ci.org/balderdashy/waterline"><img src="https://travis-ci.org/balderdashy/waterline.svg?branch=master" alt="Build Status" /></a></td>
