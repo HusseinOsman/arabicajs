@@ -1,57 +1,43 @@
-import User from '../models/user';
 import bcrypt from 'bcryptjs';
-
-const model = new User();
-
 class UserService {
-  constructor() {
-    this.modelHooks();
-  }
-
-  modelHooks() {
-    model.beforeCreate = function (next, data) {
-      // use data argument to hash password
-      data.password = bcrypt.hashSync(data.password);
-      next();
-    };
-  }
-
-  create(data, cb) {
-    const newUser = model();
+  constructor() {}
+  async create(req, data, cb) {
+    const newUser = {};
     newUser.name = data[0];
     newUser.email = data[1];
-    newUser.password = data[2];
-
-    return newUser.save((err, created) => {
-      cb(err, created);
-    });
+    newUser.password = bcrypt.hashSync(data[2]);
+    var user = await req.app.models.users.create(newUser).fetch();
+    cb(null, user);
   }
 
-  findById(id, cb) {
-    model.find(id, function (err, data) {
-      cb(err, data)
-    });
+  async findById(req, id, cb) {
+    const user = await req.app.models.users.findOne({
+      id: id
+    })
+    cb(user)
   }
 
-  findByEmail(email, cb) {
-    model.findOne({
-      where: {
-        email: email
-      }
-    }, function (err, data) {
-      cb(err, data)
+  async findByEmail(req, email, cb) {
+    const user = await req.app.models.users.findOne({
+      email: email
     });
+    cb(null, user);
   }
 
-  updateSessions(id, session, cb) {
-    model.find(id, function (err, data) {
-      let sessions = data.sessions || [];
-      sessions.push(session);
-      data.sessions = sessions;
-      return data.save((err, updated) => {
-        cb(err, updated);
+  async updateSessions(req, user, session, cb) {
+
+    let sessions = user.sessions || [];
+    sessions.push(session);
+    user.sessions = sessions;
+
+    let updatedUser = await req.app.models.users.updateOne({
+        id: user.id
+      })
+      .set({
+        sessions: sessions
       });
-    });
+
+    cb(null, updatedUser);
   }
 
 }

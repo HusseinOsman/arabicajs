@@ -11,6 +11,7 @@ import http from 'http';
 import config from '../config/env';
 import fs from 'fs';
 import env from '../config/env';
+import models from '../core/loadModels';
 
 const debug = debugLib('express-es6:server');
 // generated code below.
@@ -29,11 +30,11 @@ app.set('port', port);
 // var server = https.createServer(app);
 // we will pass our 'app' to 'https' server
 let server;
-if(env.sslCert && env.sslKey){
+if (env.sslCert && env.sslKey) {
   server = https.createServer({
-    key : fs.readFileSync(env.sslKey),
-    cert : fs.readFileSync(env.sslCert)
-  },app);
+    key: fs.readFileSync(env.sslKey),
+    cert: fs.readFileSync(env.sslCert)
+  }, app);
 } else {
   server = http.createServer(app);
 }
@@ -42,7 +43,16 @@ if(env.sslCert && env.sslKey){
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+models.waterline.initialize(models.config, function (err, models) {
+  if (err) throw err;
+  global.Models = app.models = models.collections;
+  app.connections = models.connections;
+
+  // Start Server
+  server.listen(port);
+});
+
+//server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -75,9 +85,9 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === 'string' ?
+    'Pipe ' + port :
+    'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -100,10 +110,10 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+  var bind = typeof addr === 'string' ?
+    'pipe ' + addr :
+    'port ' + addr.port;
   debug('Listening on ' + bind);
   console.info(`the server running on ${config.port}`);
-  console.info(`the server ENV Vars `,config);
+  console.info(`the server ENV Vars `, config);
 }
