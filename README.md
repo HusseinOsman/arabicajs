@@ -1,4 +1,4 @@
-# [<img title="Arabica.js" src="https://github.com/HusseinOsman/arabicajs/blob/master/public/images/arabica.png" width="610px" alt="Arabica logo"/>](https://arabicajs.com)
+# [<img title="Arabica.js" src="https://github.com/HusseinOsman/arabicajs/blob/master/public/images/arabica.png" width="610px" height="300px" alt="Arabica logo"/>](https://arabicajs.com)
 
 Arabica.js is a web framework that makes it easy to build custom, enterprise-grade Node.js apps. It is designed to resemble the MVC architecture from frameworks like Ruby on Rails, but with support for the more modern, data-oriented style of web app & API development. 
 
