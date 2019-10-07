@@ -17,7 +17,7 @@ class AuthController extends Controller {
       password
     } = req.body;
 
-    userService.create([name, email, password], (err, user) => {
+    userService.create(req, [name, email, password], (err, user) => {
       if (err) return res.status(500).send("Server error!");
       const payload = {
         id: user.id,
@@ -31,7 +31,7 @@ class AuthController extends Controller {
         'user-agent': req.header('user-agent'),
         'ip': req.header('x-forwarded-for') || req.connection.remoteAddress
       }
-      userService.updateSessions(user.id, session, (err, updated) => {
+      userService.updateSessions(req, user, session, (err, updated) => {
         res.status(200).send({
           "user": user,
           "token": token,
@@ -44,7 +44,7 @@ class AuthController extends Controller {
   login(req, res) {
     const email = req.body.email;
     const password = req.body.password;
-    userService.findByEmail(email, (err, user) => {
+    userService.findByEmail(req, email, (err, user) => {
       if (err) return res.status(500).send('Server error!');
       if (!user) return res.status(404).send('User not found!');
       const result = bcrypt.compareSync(password, user.password);
@@ -59,9 +59,10 @@ class AuthController extends Controller {
       const options = JWT.options();
       const session = {
         token: token,
-        'user-agent': req.header('user-agent')
+        'user-agent': req.header('user-agent'),
+        'ip': req.header('x-forwarded-for') || req.connection.remoteAddress
       }
-      userService.updateSessions(user.id, session, (err, updated) => {
+      userService.updateSessions(req, user, session, (err, updated) => {
         console.log("(err,updated)", err, updated)
         res.status(200).send({
           "user": user,
