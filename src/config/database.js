@@ -1,39 +1,39 @@
-import jugglingdb from 'jugglingdb';
-import config from './env';
-let _schema = null;
-let _Schema = null;
-let _instance = null;
+import mongoAdapter from 'sails-mongo';
+import Env from '../config/env';
+const config = {
 
-class Database {
+    adapters: {
+        'sails-mongo': mongoAdapter,
+        // ...other Waterline-compatible adapters (e.g. 'sails-mysql') might go here
+    },
 
-    constructor() {
-        if (!_instance) {
-            const url = `mongodb://${config.mongoHost}:${config.mongoPort}/${config.mongoName}`;
-
-            console.log("url=> ", url);
-            _Schema = jugglingdb.Schema;
-            _schema = new _Schema('mongodb', {
-                url: url,
-                w: 1,
-                j: 1
-            });
-            _instance = this;
-            console.log("iam a database class constractor");
-        }
-        return _instance;
+    datastores: {
+        default: {
+            adapter: 'sails-mongo',
+            url: `mongodb://${Env.mongoHost}:${Env.mongoPort}/${Env.mongoName}`
+        },
+    },
+    defaultModelSettings: { // defaultModelSettings
+        primaryKey: 'id',
+        datastore: 'default',
+        attributes: {
+            // id: {
+            //     type: 'number',
+            //     autoMigrations: {
+            //         autoIncrement: true
+            //     }
+            // },
+            id: {
+                type: 'string',
+                columnName: '_id'
+            },
+            test: {
+                type: 'string',
+                default:"test defaul"
+            },
+        },
+        // ...any other orm-wide default settings for all models go here
     }
+};
 
-    get schema() {
-        if (!_instance)
-            return false;
-        return _schema;
-    }
-
-    get Schema() {
-        if (!_instance)
-            return false;
-        return _Schema;
-    }
-}
-
-export default Database;
+module.exports = config;
