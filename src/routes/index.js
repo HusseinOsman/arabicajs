@@ -51,7 +51,7 @@ router.get('/sendemail', Authentication.check, (req, res) => {
   });
 });
 
-router.get('/verifyemail', Authentication.check, (req, res) => {
+router.get('/verifyemail', (req, res) => {
   email.verify((err, success) => {
 
     if (err)
