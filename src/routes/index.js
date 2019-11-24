@@ -7,6 +7,10 @@ let router = express.Router();
 import Email from '../app/helper/email';
 const email = new Email();
 import response from '../app/helper/response';
+import passport from 'passport';
+
+import validate from '../app/middleware/validate';
+import validateAuth from '../app/validations/auth';
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -15,9 +19,9 @@ router.get('/', function (req, res, next) {
   });
 });
 
-router.post('/register', authController.register);
+router.post('/register', validate(validateAuth.register), authController.register);
 
-router.post('/login', authController.login);
+router.post('/login', validate(validateAuth.login), authController.login);
 
 router.get('/sendemail', Authentication.check, (req, res) => {
   // Message object
@@ -51,7 +55,7 @@ router.get('/sendemail', Authentication.check, (req, res) => {
   });
 });
 
-router.get('/verifyemail', (req, res) => {
+router.get('/verifyemail', passport.authenticate('jwt'),(req, res) => {
   email.verify((err, success) => {
 
     if (err)
