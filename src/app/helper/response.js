@@ -1,13 +1,28 @@
 class Response {
 
-    static returnError(res, error) {
-        const status = typeof error.status !== 'undefined' ? error.status : 500;
+    static returnError(res, message, code, status) {
+
+        console.log("return err ===============================", message);
+
+        const statusCode = typeof status !== 'undefined' ? status : 400;
+        let messages = [];
+        if (typeof message === 'string') {
+            messages.push({
+                path: 'err',
+                message: message
+            });
+        }
+
         const data = {
             'success': false,
-            'error': error
+            'errors': messages
         };
+
+        if (typeof code !== 'undefined')
+            data.code = code;
+
         res.type('application/json');
-        res.status(status).send(data);
+        res.status(statusCode).send(data);
     };
 
     static returnData(res, data, key, status) {
