@@ -4,9 +4,6 @@ import response from '../helper/response';
 // API body validation middleware
 const validate = (validationSchema) => {
     return function (req, res, next) {
-        if (req.body.industry) {
-            req.body.industry = req.body.industry.name;
-        }
         const validation = Joi.validate(req.body, validationSchema, {
             abortEarly: false
         });
