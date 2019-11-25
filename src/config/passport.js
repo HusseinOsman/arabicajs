@@ -24,7 +24,6 @@ passport.use(
                     },
                 }).then(user => {
                     if (user != null) {
-                        console.log('passport -> username or email already taken');
                         return done(null, false, {
                             message: 'username or email already taken',
                         });
@@ -35,12 +34,10 @@ passport.use(
                             email: req.body.email,
                         }).fetch();
 
-                        console.log('passport -> user created', user);
                         return done(null, user);
                     });
                 });
             } catch (err) {
-                console.log('passport -> err ', err);
                 return done(err);
             }
         },
@@ -88,11 +85,11 @@ passport.use(
 );
 
 passport.serializeUser(function (user, done) {
-    console.log("serializeUser ===================", user);
+    //console.log("serializeUser ===================", user);
     done(null, user);
 });
 passport.deserializeUser(function (user, cb) {
-    console.log("=================desrialize====================", user);
+    //console.log("deserializeUser ===========================", user);
     cb(null, user);
 });
 // passport.deserializeUser(function (user, done) {
@@ -115,29 +112,25 @@ const opts = {
 
 passport.use(
     'jwt',
-    new JWTstrategy(opts, (jwt_payload, done) => {
-        console.log("passport jwt =============", jwt_payload)
+    new JWTstrategy(opts, (payload, done) => {
         try {
             const User = global.Models.users;
             User.findOne({
                 where: {
-                    id: jwt_payload.id,
+                    id: payload.id,
                 },
             }).then(user => {
                 if (user) {
-                    console.log('user found in db in passport');
                     done(null, {
                         id: user.id,
                         name: user.name,
                         email: user.email
                     });
                 } else {
-                    console.log('user not found in db');
                     done(null, false);
                 }
             });
         } catch (err) {
-            console.log("jwt err ======================", err)
             done(err);
         }
     }),

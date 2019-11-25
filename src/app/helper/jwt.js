@@ -8,7 +8,11 @@ class JWT {
         return jwt.verify(token, Env.jwtSecret, this.options());
     }
 
-    static sign(payload) {
+    static sign(user) {
+        const payload = {
+            id: user.id,
+            user: user.name
+        };
         return jwt.sign(payload, Env.jwtSecret, this.options());
     }
 

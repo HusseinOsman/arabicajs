@@ -1,12 +1,11 @@
-import bcrypt from 'bcryptjs';
 class UserService {
   constructor() {}
   async create(req, data, cb) {
     const newUser = {};
     newUser.name = data[0];
     newUser.email = data[1];
-    newUser.password = bcrypt.hashSync(data[2]);
-    var user = await req.app.models.users.create(newUser).fetch();
+    newUser.password = data[2];
+    const user = await req.app.models.users.create(newUser).fetch();
     cb(null, user);
   }
 
@@ -38,6 +37,16 @@ class UserService {
       });
 
     cb(null, updatedUser);
+  }
+
+  async update(req, user, cb) {
+
+    const updated = await req.app.models.users.updateOne({
+        id: user.id
+      })
+      .set(user);
+
+    cb(null, updated);
   }
 
 }

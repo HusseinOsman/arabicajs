@@ -19,16 +19,7 @@ router.get('/', function (req, res, next) {
   });
 });
 
-//router.post('/register', validate(validateAuth.register), authController.register);
-router.post('/register', validate(validateAuth.register), passport.authenticate('signup', {
-  session: false
-}), async (req, res, next) => {
-  res.json({
-    message: 'Signup successful',
-    user: req.user
-  });
-});
-
+router.post('/register', validate(validateAuth.register), authController.register);
 
 router.post('/login', validate(validateAuth.login), authController.login);
 
