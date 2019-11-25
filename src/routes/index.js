@@ -19,7 +19,16 @@ router.get('/', function (req, res, next) {
   });
 });
 
-router.post('/register', validate(validateAuth.register), authController.register);
+//router.post('/register', validate(validateAuth.register), authController.register);
+router.post('/register', validate(validateAuth.register), passport.authenticate('signup', {
+  session: false
+}), async (req, res, next) => {
+  res.json({
+    message: 'Signup successful',
+    user: req.user
+  });
+});
+
 
 router.post('/login', validate(validateAuth.login), authController.login);
 
@@ -55,7 +64,7 @@ router.get('/sendemail', Authentication.check, (req, res) => {
   });
 });
 
-router.get('/verifyemail', passport.authenticate('jwt'),(req, res) => {
+router.get('/verifyemail', passport.authenticate('jwt'), (req, res) => {
   email.verify((err, success) => {
 
     if (err)
@@ -65,4 +74,14 @@ router.get('/verifyemail', passport.authenticate('jwt'),(req, res) => {
   });
 });
 
+import isAuthenticated from '../app/middleware/isAuthenticated';
+// router.get('/check', passport.authenticate('jwt',{session: false}), (req,res) =>{
+//   console.log("check =======================================",req.user);
+//   response.returnData(res, req.user);
+// });
+
+router.get('/check', isAuthenticated, (req, res) => {
+  console.log("check =======================================", req.user);
+  response.returnData(res, req.user);
+});
 export default router;
