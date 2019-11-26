@@ -13,6 +13,70 @@ class AuthController extends Controller {
   constructor() {
     super();
   }
+
+  /**
+   * @api {post} auth/register register 
+   * @apiName Register
+   * @apiGroup Auth
+   *
+   * @apiParam {string}  email  user email.
+   * @apiParam {string}  [name]  user name.
+   * @apiParam {string}  password user password.
+   * 
+   * @apiSuccessExample {json} Success-Response:
+   *  
+   *     HTTP/1.1 200 OK
+   *      //happy case 
+   *      //token in http header 
+   *      {
+   *          "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZGJkZjViMWE0NmYyMTNlMWZiZTgxMyIsInVzZXIiOiJodXNzZWluIiwiaWF0IjoxNTc0Njk5NDM0LCJleHAiOjE1NzQ3ODU4MzQsImlzcyI6ImFyYWJpY2FqcyJ9.wvkEn8mPbi0S-AKLHSHi2A6xVDu26IQ5hcAOsY_pm4w"
+   *      }
+   *      //you must save it in local storage
+   *  
+   *      {
+   *          "success": true,
+   *          "data": {
+   *              "user": {
+   *                  "id": "5ddbdf5b1a46f213e1fbe813",
+   *                  "name": "hussein",
+   *                  "email": "user@gmail.com"
+   *              },
+   *              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZGJkZjViMWE0NmYyMTNlMWZiZTgxMyIsInVzZXIiOiJodXNzZWluIiwiaWF0IjoxNTc0Njk5NDM0LCJleHAiOjE1NzQ3ODU4MzQsImlzcyI6ImFyYWJpY2FqcyJ9.wvkEn8mPbi0S-AKLHSHi2A6xVDu26IQ5hcAOsY_pm4w",
+   *              "expires_in": "1d"
+   *          }
+   *      }
+   *     
+   *     
+   * @apiErrorExample {json} Error-Response 0:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 0,
+   *       "errors": [
+   *          {
+   *             "path": "email",
+   *             "message": "\"email\" is required"
+   *          },
+   *          {
+   *             "path": "password",
+   *             "message": "\"password\" is required"
+   *          }
+   *        ]
+   *    }
+   * @apiErrorExample {json} Error-Response 1:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 1,
+   *       "errors": [
+   *          {
+   *              "path": "email",
+   *              "message": "email already taken"
+   *          }
+   *        ]
+   *    }
+   */
+
   register(req, res, next) {
     const {
       name,
@@ -22,7 +86,7 @@ class AuthController extends Controller {
 
     passport.authenticate('register', (err, user, info) => {
       if (err) return response.returnError(res, err);
-      
+
       if (info != undefined)
         return response.returnError(res, info.message, 1);
       else {
@@ -53,6 +117,81 @@ class AuthController extends Controller {
       }
     })(req, res, next);
   }
+
+
+  /**
+   * @api {post} auth/login login
+   * @apiName Login
+   * @apiGroup Auth
+   *
+   * @apiParam {string}  email  user email.
+   * @apiParam {string}  password user password.
+   * @apiSuccessExample {json} Success-Response:
+   *  
+   *     HTTP/1.1 200 OK
+   *      //happy case 
+   *      //token in http header 
+   *      {
+   *          "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZGJkZjViMWE0NmYyMTNlMWZiZTgxMyIsInVzZXIiOiJodXNzZWluIiwiaWF0IjoxNTc0Njk5NDM0LCJleHAiOjE1NzQ3ODU4MzQsImlzcyI6ImFyYWJpY2FqcyJ9.wvkEn8mPbi0S-AKLHSHi2A6xVDu26IQ5hcAOsY_pm4w"
+   *      }
+   *      //you must save it in local storage
+   *  
+   *      {
+   *          "success": true,
+   *          "data": {
+   *              "user": {
+   *                  "id": "5ddbdf5b1a46f213e1fbe813",
+   *                  "name": "hussein",
+   *                  "email": "user@gmail.com"
+   *              },
+   *              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZGJkZjViMWE0NmYyMTNlMWZiZTgxMyIsInVzZXIiOiJodXNzZWluIiwiaWF0IjoxNTc0Njk5NDM0LCJleHAiOjE1NzQ3ODU4MzQsImlzcyI6ImFyYWJpY2FqcyJ9.wvkEn8mPbi0S-AKLHSHi2A6xVDu26IQ5hcAOsY_pm4w",
+   *              "expires_in": "1d"
+   *          }
+   *      }
+   *     
+   *     
+   * @apiErrorExample {json} Error-Response 0:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 0,
+   *       "errors": [
+   *          {
+   *             "path": "email",
+   *             "message": "\"email\" is required"
+   *          },
+   *          {
+   *             "path": "password",
+   *             "message": "\"password\" is required"
+   *          }
+   *        ]
+   *    }
+   * @apiErrorExample {json} Error-Response 1:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 1,
+   *       "errors": [
+   *          {
+   *              "path": "email",
+   *              "message": "bad email"
+   *          }
+   *        ]
+   *    }
+   * @apiErrorExample {json} Error-Response 2:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 2,
+   *       "errors": [
+   *          {
+   *              "path": "passwords",
+   *              "message": "passwords do not match"
+   *          }
+   *        ]
+   *    }
+   * 
+   */
 
   login(req, res, next) {
     passport.authenticate('login', {
