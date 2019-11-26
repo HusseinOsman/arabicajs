@@ -1,11 +1,25 @@
 class Response {
 
-    static returnError(res, error) {
-        const status = typeof error.status !== 'undefined' ? error.status : 500;
+    static returnError(res, message, code, status) {
+        console.log("return err ===============================",  message);
+        status = typeof status !== 'undefined' ? status : 400;
+        if (typeof message === 'string') {
+            const tmpMessage = message;
+            message=[];
+            message.push({
+                path: 'err',
+                message: tmpMessage
+            });
+        }
+
         const data = {
             'success': false,
-            'error': error
+            'errors': message
         };
+
+        if (typeof code !== 'undefined')
+            data.code = code;
+
         res.type('application/json');
         res.status(status).send(data);
     };
@@ -48,21 +62,6 @@ class Response {
         res.type('application/json');
         res.status(200).send(data);
     };
-
-    static getOffset(req) {
-        if (req.query.offset !== undefined) {
-            return parseInt(req.query.offset);
-        }
-        return 0;
-    };
-
-    static getLimit(req) {
-        if (req.query.limit !== undefined) {
-            return parseInt(req.query.limit);
-        }
-        return 25;
-    };
-
 }
 
 export default Response;

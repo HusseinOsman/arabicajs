@@ -1,7 +1,11 @@
 import Controller from '../../core/controller';
 import UserService from '../services/userService'
-import bcrypt from 'bcryptjs';
 import JWT from '../helper/jwt';
+import response from '../helper/response';
+import request from '../helper/request';
+import standards from '../helper/standards'
+import passport from 'passport';
+
 
 const userService = new UserService();
 
@@ -10,67 +14,219 @@ class AuthController extends Controller {
     super();
   }
 
-  register(req, res) {
+  /**
+   * @api {post} auth/register register 
+   * @apiName Register
+   * @apiGroup Auth
+   *
+   * @apiParam {string}  email  user email.
+   * @apiParam {string}  [name]  user name.
+   * @apiParam {string}  password user password.
+   * 
+   * @apiSuccessExample {json} Success-Response:
+   *  
+   *     HTTP/1.1 200 OK
+   *      //happy case 
+   *      //token in http header 
+   *      {
+   *          "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZGJkZjViMWE0NmYyMTNlMWZiZTgxMyIsInVzZXIiOiJodXNzZWluIiwiaWF0IjoxNTc0Njk5NDM0LCJleHAiOjE1NzQ3ODU4MzQsImlzcyI6ImFyYWJpY2FqcyJ9.wvkEn8mPbi0S-AKLHSHi2A6xVDu26IQ5hcAOsY_pm4w"
+   *      }
+   *      //you must save it in local storage
+   *  
+   *      {
+   *          "success": true,
+   *          "data": {
+   *              "user": {
+   *                  "id": "5ddbdf5b1a46f213e1fbe813",
+   *                  "name": "hussein",
+   *                  "email": "user@gmail.com"
+   *              },
+   *              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZGJkZjViMWE0NmYyMTNlMWZiZTgxMyIsInVzZXIiOiJodXNzZWluIiwiaWF0IjoxNTc0Njk5NDM0LCJleHAiOjE1NzQ3ODU4MzQsImlzcyI6ImFyYWJpY2FqcyJ9.wvkEn8mPbi0S-AKLHSHi2A6xVDu26IQ5hcAOsY_pm4w",
+   *              "expires_in": "1d"
+   *          }
+   *      }
+   *     
+   *     
+   * @apiErrorExample {json} Error-Response 0:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 0,
+   *       "errors": [
+   *          {
+   *             "path": "email",
+   *             "message": "\"email\" is required"
+   *          },
+   *          {
+   *             "path": "password",
+   *             "message": "\"password\" is required"
+   *          }
+   *        ]
+   *    }
+   * @apiErrorExample {json} Error-Response 1:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 1,
+   *       "errors": [
+   *          {
+   *              "path": "email",
+   *              "message": "email already taken"
+   *          }
+   *        ]
+   *    }
+   */
+
+  register(req, res, next) {
     const {
       name,
       email,
       password
     } = req.body;
 
-    userService.create(req, [name, email, password], (err, user) => {
-      if (err) return res.status(500).send("Server error!");
-      const payload = {
-        id: user.id,
-        user: user.name
-      };
+    passport.authenticate('register', (err, user, info) => {
+      if (err) return response.returnError(res, err);
 
-      const token = JWT.sign(payload);
-      const options = JWT.options();
-      const session = {
-        token: token,
-        'user-agent': req.header('user-agent'),
-        'ip': req.header('x-forwarded-for') || req.connection.remoteAddress
-      }
-      userService.updateSessions(req, user, session, (err, updated) => {
-        res.status(200).send({
-          "user": user,
-          "token": token,
-          "expires_in": options.expiresIn
+      if (info != undefined)
+        return response.returnError(res, info.message, 1);
+      else {
+        req.logIn(user, (err) => {
+          if (err) return response.returnError(res, err);
+
+          const token = JWT.sign(user);
+          const options = JWT.options();
+
+          let session = [request.getSession(req)];
+          session[0].token = token;
+
+          const data = {
+            ...user,
+            "sessions": session,
+            "name": name
+          };
+
+          userService.update(req, data, (err, updated) => {
+            res.set('Authorization', token);
+            return response.returnData(res, {
+              "user": standards.getReturnUser(updated),
+              "token": token,
+              "expires_in": options.expiresIn
+            });
+          });
         });
-      });
-    });
+      }
+    })(req, res, next);
   }
 
-  login(req, res) {
-    const email = req.body.email;
-    const password = req.body.password;
-    userService.findByEmail(req, email, (err, user) => {
-      if (err) return res.status(500).send('Server error!');
-      if (!user) return res.status(404).send('User not found!');
-      const result = bcrypt.compareSync(password, user.password);
-      if (!result) return res.status(401).send('Password not valid!');
 
-      const payload = {
-        id: user.id,
-        user: user.name
-      };
+  /**
+   * @api {post} auth/login login
+   * @apiName Login
+   * @apiGroup Auth
+   *
+   * @apiParam {string}  email  user email.
+   * @apiParam {string}  password user password.
+   * @apiSuccessExample {json} Success-Response:
+   *  
+   *     HTTP/1.1 200 OK
+   *      //happy case 
+   *      //token in http header 
+   *      {
+   *          "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZGJkZjViMWE0NmYyMTNlMWZiZTgxMyIsInVzZXIiOiJodXNzZWluIiwiaWF0IjoxNTc0Njk5NDM0LCJleHAiOjE1NzQ3ODU4MzQsImlzcyI6ImFyYWJpY2FqcyJ9.wvkEn8mPbi0S-AKLHSHi2A6xVDu26IQ5hcAOsY_pm4w"
+   *      }
+   *      //you must save it in local storage
+   *  
+   *      {
+   *          "success": true,
+   *          "data": {
+   *              "user": {
+   *                  "id": "5ddbdf5b1a46f213e1fbe813",
+   *                  "name": "hussein",
+   *                  "email": "user@gmail.com"
+   *              },
+   *              "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZGJkZjViMWE0NmYyMTNlMWZiZTgxMyIsInVzZXIiOiJodXNzZWluIiwiaWF0IjoxNTc0Njk5NDM0LCJleHAiOjE1NzQ3ODU4MzQsImlzcyI6ImFyYWJpY2FqcyJ9.wvkEn8mPbi0S-AKLHSHi2A6xVDu26IQ5hcAOsY_pm4w",
+   *              "expires_in": "1d"
+   *          }
+   *      }
+   *     
+   *     
+   * @apiErrorExample {json} Error-Response 0:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 0,
+   *       "errors": [
+   *          {
+   *             "path": "email",
+   *             "message": "\"email\" is required"
+   *          },
+   *          {
+   *             "path": "password",
+   *             "message": "\"password\" is required"
+   *          }
+   *        ]
+   *    }
+   * @apiErrorExample {json} Error-Response 1:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 1,
+   *       "errors": [
+   *          {
+   *              "path": "email",
+   *              "message": "bad email"
+   *          }
+   *        ]
+   *    }
+   * @apiErrorExample {json} Error-Response 2:
+   *     HTTP/1.1 400 Bad Request
+   *     {
+   *       "success": false,
+   *       "code": 2,
+   *       "errors": [
+   *          {
+   *              "path": "passwords",
+   *              "message": "passwords do not match"
+   *          }
+   *        ]
+   *    }
+   * 
+   */
 
-      const token = JWT.sign(payload);
-      const options = JWT.options();
-      const session = {
-        token: token,
-        'user-agent': req.header('user-agent'),
-        'ip': req.header('x-forwarded-for') || req.connection.remoteAddress
-      }
-      userService.updateSessions(req, user, session, (err, updated) => {
-        console.log("(err,updated)", err, updated)
-        res.status(200).send({
-          "user": user,
-          "token": token,
-          "expires_in": options.expiresIn
+  login(req, res, next) {
+    passport.authenticate('login', {
+      session: false
+    }, (err, user, info) => {
+      if (err) return response.returnError(res, err);
+
+      if (info !== undefined) {
+        console.error(info.message);
+        if (info.message === 'bad username') {
+          res.status(401).send(info.message);
+        } else {
+          res.status(403).send(info.message);
+        }
+      } else {
+        req.logIn(user, (err) => {
+          if (err) return response.returnError(res, err);
+
+          const token = JWT.sign(user);
+          const options = JWT.options();
+
+          let session = request.getSession(req);
+          session.token = token;
+
+          userService.updateSessions(req, user, session, (err, updated) => {
+            res.set('Authorization', token);
+            return response.returnData(res, {
+              "user": standards.getReturnUser(user),
+              "token": token,
+              "expires_in": options.expiresIn
+            });
+          });
         });
-      });
-    });
+      }
+    })(req, res, next);
   }
 }
 export default AuthController;

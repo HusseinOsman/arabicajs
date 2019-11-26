@@ -7,17 +7,37 @@ let router = express.Router();
 import Email from '../app/helper/email';
 const email = new Email();
 import response from '../app/helper/response';
+import passport from 'passport';
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('index', {
-    title: 'Arabica.js'
-  });
+import validate from '../app/middleware/validate';
+import validateAuth from '../app/validations/auth';
+
+/* GET to check api status. */
+
+ /**
+   * @api {get} status status 
+   * @apiName Status
+   * @apiGroup General
+   * 
+   * @apiSuccessExample {json} Success-Response:
+   *  
+   *     HTTP/1.1 200 OK    
+   *      {
+   *          "success": true
+   *      }
+   *     
+   *     
+   * @apiErrorExample {json} Error-Response 0:
+   *     HTTP/1.1 500 Server Internal Error
+   */
+
+router.get('/status', function (req, res, next) {
+  response.returnSuccess(res);
 });
 
-router.post('/register', authController.register);
+router.post('/auth/register', validate(validateAuth.register), authController.register);
 
-router.post('/login', authController.login);
+router.post('/auth/login', validate(validateAuth.login), authController.login);
 
 router.get('/sendemail', Authentication.check, (req, res) => {
   // Message object
@@ -51,7 +71,7 @@ router.get('/sendemail', Authentication.check, (req, res) => {
   });
 });
 
-router.get('/verifyemail', Authentication.check, (req, res) => {
+router.get('/verifyemail', passport.authenticate('jwt'), (req, res) => {
   email.verify((err, success) => {
 
     if (err)
@@ -61,4 +81,14 @@ router.get('/verifyemail', Authentication.check, (req, res) => {
   });
 });
 
+import isAuthenticated from '../app/middleware/isAuthenticated';
+// router.get('/check', passport.authenticate('jwt',{session: false}), (req,res) =>{
+//   console.log("check =======================================",req.user);
+//   response.returnData(res, req.user);
+// });
+
+router.get('/check', isAuthenticated, (req, res) => {
+  console.log("check =======================================", req.user);
+  response.returnData(res, req.user);
+});
 export default router;
