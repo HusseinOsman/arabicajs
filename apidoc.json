@@ -1,0 +1,16 @@
+{
+    "name": "Arabica.js",
+    "version": "1.0.0",
+    "description": "API Documentation for Arabica backend",
+    "title": "API Documentation for Arabica backend",
+    "url": "https://arabicajs.com/",
+    "sampleUrl": "https://0.0.0.0:8080/",
+    "header": {
+        "title": "Header",
+        "filename": "apiDocHeader.md"
+    },
+    "footer": {
+        "title": "Footer",
+        "filename": "apiDocFooter.md"
+    }
+}

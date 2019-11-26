@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3.4"
 
 volumes:
   db-data: {}
@@ -48,3 +48,11 @@ services:
       - db-data:/data/db
     ports:
       - "${MONGO_PORT}:${MONGO_PORT}"
+  docs:
+    build:
+      context: .
+      dockerfile: .docker/apidoc/Dockerfile
+    environment:
+      - APIDOC_PORT
+    ports:
+      - "${APIDOC_PORT}:80"

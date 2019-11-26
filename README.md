@@ -33,6 +33,16 @@ $ npm run watch
 $ npm run prod 
 ```
 
+## APIDoc Generate a API Documentation &nbsp;
+**With [apidoc](https://apidocjs.com/) :**
+```sh
+# install apidoc Command Line Interface generally
+$ npm install apidoc -g
+# generate your documentation in apidoc folder by this command 
+# i will docarized this apidocs by default
+$ apidoc -i src/ -o apidoc/
+```
+
 ## Compatibility
 
 Arabica is built on [Node.js](http://nodejs.org/), [Express](http://expressjs.com/) with [ES6](https://www.w3schools.com/js/js_es6.asp) support
