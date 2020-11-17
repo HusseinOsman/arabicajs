@@ -12,16 +12,32 @@ import passport from 'passport';
 import validate from '../app/middleware/validate';
 import validateAuth from '../app/validations/auth';
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('index', {
-    title: 'Arabica.js'
-  });
+/* GET to check api status. */
+
+ /**
+   * @api {get} status status 
+   * @apiName Status
+   * @apiGroup General
+   * 
+   * @apiSuccessExample {json} Success-Response:
+   *  
+   *     HTTP/1.1 200 OK    
+   *      {
+   *          "success": true
+   *      }
+   *     
+   *     
+   * @apiErrorExample {json} Error-Response 0:
+   *     HTTP/1.1 500 Server Internal Error
+   */
+
+router.get('/status', function (req, res, next) {
+  response.returnSuccess(res);
 });
 
-router.post('/register', validate(validateAuth.register), authController.register);
+router.post('/auth/register', validate(validateAuth.register), authController.register);
 
-router.post('/login', validate(validateAuth.login), authController.login);
+router.post('/auth/login', validate(validateAuth.login), authController.login);
 
 router.get('/sendemail', Authentication.check, (req, res) => {
   // Message object
