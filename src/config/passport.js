@@ -15,36 +15,35 @@ passport.use(
             passReqToCallback: true,
             session: true,
         },
-        (req, email, password, done) => {
+        async (req, email, password, done) => {
             try {
                 const User = global.Models.users;
-                User.findOne({
+                const user = await User.findOne({
                     where: {
                         email
                     },
-                }).then(user => {
-                    if (user != null) {
-                        return done(null, false, {
-                            message: 'username or email already taken',
-                        });
-                    }
-                    bcrypt.hash(password, BCRYPT_SALT_ROUNDS).then(async hashedPassword => {
-                        const user = await User.create({
-                            password: hashedPassword,
-                            email: req.body.email,
-                        }).fetch();
+                }).select(["id"]);
 
-                        return done(null, user);
+                if (user != null) {
+                    return done(null, false, {
+                        message: 'username or email already taken',
                     });
+                }
+                bcrypt.hash(password, BCRYPT_SALT_ROUNDS).then(async hashedPassword => {
+                    const user = await User.create({
+                        password: hashedPassword,
+                        email: req.body.email,
+                    }).fetch();
+
+                    return done(null, user);
                 });
+
             } catch (err) {
                 return done(err);
             }
         },
     ),
 );
-
-
 
 passport.use(
     'login',
@@ -53,29 +52,29 @@ passport.use(
             passwordField: 'password',
             session: false,
         },
-        (email, password, done) => {
+        async (email, password, done) => {
             try {
                 const User = global.Models.users;
 
-                User.findOne({
+                const user = await User.findOne({
                     where: {
                         email,
                     },
-                }).then(user => {
-                    if (!user)
+                })
+
+                if (!user)
+                    return done(null, false, {
+                        message: 'bad email'
+                    });
+
+                bcrypt.compare(password, user.password).then(response => {
+                    if (response !== true)
                         return done(null, false, {
-                            message: 'bad email'
+                            message: 'passwords do not match'
                         });
 
-                    bcrypt.compare(password, user.password).then(response => {
-                        if (response !== true)
-                            return done(null, false, {
-                                message: 'passwords do not match'
-                            });
-
-                        //user found & authenticated
-                        return done(null, user);
-                    });
+                    //user found & authenticated
+                    return done(null, user);
                 });
             } catch (err) {
                 done(err);
@@ -112,24 +111,25 @@ const opts = {
 
 passport.use(
     'jwt',
-    new JWTstrategy(opts, (payload, done) => {
+    new JWTstrategy(opts, async (payload, done) => {
         try {
             const User = global.Models.users;
-            User.findOne({
+            const user = await User.findOne({
                 where: {
                     id: payload.id,
                 },
-            }).then(user => {
-                if (user) {
-                    done(null, {
-                        id: user.id,
-                        name: user.name,
-                        email: user.email
-                    });
-                } else {
-                    done(null, false);
-                }
             });
+
+            if (user) {
+                done(null, {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email
+                });
+            } else {
+                done(null, false);
+            }
+
         } catch (err) {
             done(err);
         }
