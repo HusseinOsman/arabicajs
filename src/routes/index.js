@@ -39,6 +39,11 @@ router.post('/auth/register', validate(validateAuth.register), authController.re
 
 router.post('/auth/login', validate(validateAuth.login), authController.login);
 
+router.get('/auth/check', isAuthenticated, (req, res) => {
+  console.log("check =======================================", req.user);
+  response.returnData(res, req.user);
+});
+
 router.get('/sendemail', Authentication.check, (req, res) => {
   // Message object
   let message = {
@@ -87,8 +92,5 @@ import isAuthenticated from '../app/middleware/isAuthenticated';
 //   response.returnData(res, req.user);
 // });
 
-router.get('/check', isAuthenticated, (req, res) => {
-  console.log("check =======================================", req.user);
-  response.returnData(res, req.user);
-});
+
 export default router;
