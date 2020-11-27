@@ -63,15 +63,19 @@ passport.use(
                 })
 
                 if (!user)
-                    return done(null, false, {
-                        message: 'bad email'
-                    });
+                    return setTimeout(() => {
+                        done(null, false, {
+                            message: 'bad email'
+                        })
+                    }, 2000);
 
                 bcrypt.compare(password, user.password).then(response => {
                     if (response !== true)
-                        return done(null, false, {
-                            message: 'passwords do not match'
-                        });
+                        return setTimeout(() => {
+                            done(null, false, {
+                                message: 'passwords do not match'
+                            });
+                        }, 2000)
 
                     //user found & authenticated
                     return done(null, user);
