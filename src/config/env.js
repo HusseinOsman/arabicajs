@@ -16,6 +16,9 @@ const Env = {
     "EMAIL_HOST":process.env.EMAIL_HOST || null,
     "EMAIL_PORT":process.env.EMAIL_PORT || null,
     "EMAIL_SECURE":process.env.EMAIL_SECURE || null,
+    "FIREBASE_TIME_TO_LIVE": process.env.FIREBASE_TIME_TO_LIVE || 86400,
+    "FIREBASE_PRIORITY": process.env.FIREBASE_PRIORITY || 'high',
+    "FIREBASE_DATABASE_URL": process.env.FIREBASE_DATABASE_URL || '',
 };
 
 export default Env;

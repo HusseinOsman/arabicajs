@@ -33,6 +33,9 @@ services:
       - EMAIL_HOST
       - EMAIL_PORT
       - EMAIL_SECURE
+      - FIREBASE_TIME_TO_LIVE
+      - FIREBASE_PRIORITY
+      - FIREBASE_DATABASE_URL
     ports:
       - "${PORT}:${PORT}"
   db:
