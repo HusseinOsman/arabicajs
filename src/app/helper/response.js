@@ -55,12 +55,13 @@ class Response {
         res.status(status).send(newData);
     };
 
-    static returnSuccess(res) {
+    static success(res, status) {
+        status = typeof status !== 'undefined' ? status : 200;
         const data = {
             'success': true
         };
         res.type('application/json');
-        res.status(200).send(data);
+        res.status(status).send(data);
     };
 }
 

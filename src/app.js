@@ -11,6 +11,10 @@ const app = express();
 require('./config/passport');
 
 app.use(cors());
+app.use(function (req, res, next) {
+    res.setHeader('X-Powered-By', 'arabica')
+    next()
+});
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({

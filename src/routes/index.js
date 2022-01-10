@@ -32,7 +32,7 @@ import validateAuth from '../app/validations/auth';
    */
 
 router.get('/status', function (req, res, next) {
-  response.returnSuccess(res);
+  response.success(res);
 });
 
 router.post('/auth/register', validate(validateAuth.register), authController.register);
