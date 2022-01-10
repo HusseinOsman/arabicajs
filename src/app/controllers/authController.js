@@ -85,13 +85,13 @@ class AuthController extends Controller {
     } = req.body;
 
     passport.authenticate('register', (err, user, info) => {
-      if (err) return response.returnError(res, err);
+      if (err) return response.error(res, err);
 
       if (info != undefined)
-        return response.returnError(res, info.message, 1);
+        return response.error(res, info.message, 1);
       else {
         req.logIn(user, (err) => {
-          if (err) return response.returnError(res, err);
+          if (err) return response.error(res, err);
 
           const token = JWT.sign(user);
           const options = JWT.options();
@@ -107,7 +107,7 @@ class AuthController extends Controller {
 
           userService.update(req, data, (err, updated) => {
             res.set('Authorization', token);
-            return response.returnData(res, {
+            return response.data(res, {
               "user": standards.getReturnUser(updated),
               "token": token,
               "expires_in": options.expiresIn
@@ -197,7 +197,7 @@ class AuthController extends Controller {
     passport.authenticate('login', {
       session: false
     }, (err, user, info) => {
-      if (err) return response.returnError(res, err);
+      if (err) return response.error(res, err);
 
       if (info !== undefined) {
         console.error(info.message);
@@ -208,7 +208,7 @@ class AuthController extends Controller {
         }
       } else {
         req.logIn(user, (err) => {
-          if (err) return response.returnError(res, err);
+          if (err) return response.error(res, err);
 
           const token = JWT.sign(user);
           const options = JWT.options();
@@ -218,7 +218,7 @@ class AuthController extends Controller {
 
           userService.updateSessions(req, user, session, (err, updated) => {
             res.set('Authorization', token);
-            return response.returnData(res, {
+            return response.data(res, {
               "user": standards.getReturnUser(user),
               "token": token,
               "expires_in": options.expiresIn

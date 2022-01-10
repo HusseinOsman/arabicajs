@@ -16,7 +16,7 @@ const validate = (validationSchema) => {
                 });
             });
 
-            response.returnError(res, errors, 0);
+            response.error(res, errors, 0);
         } else {
             next();
         }
