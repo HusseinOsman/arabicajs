@@ -41,7 +41,7 @@ router.post('/auth/login', validate(validateAuth.login), authController.login);
 
 router.get('/auth/check', isAuthenticated, (req, res) => {
   console.log("check =======================================", req.user);
-  response.returnData(res, req.user);
+  response.data(res, req.user);
 });
 
 router.get('/sendemail', Authentication.check, (req, res) => {
@@ -80,8 +80,8 @@ router.get('/verifyemail', passport.authenticate('jwt'), (req, res) => {
   email.verify((err, success) => {
 
     if (err)
-      response.returnError(res, err);
-    response.returnData(res, success, "customData");
+      response.error(res, err);
+    response.data(res, success, "customData");
 
   });
 });
@@ -89,7 +89,7 @@ router.get('/verifyemail', passport.authenticate('jwt'), (req, res) => {
 import isAuthenticated from '../app/middleware/isAuthenticated';
 // router.get('/check', passport.authenticate('jwt',{session: false}), (req,res) =>{
 //   console.log("check =======================================",req.user);
-//   response.returnData(res, req.user);
+//   response.data(res, req.user);
 // });
 
 

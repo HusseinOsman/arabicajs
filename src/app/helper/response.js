@@ -1,6 +1,6 @@
 class Response {
 
-    static returnError(res, message, code, status) {
+    static error(res, message, code, status) {
         console.log("return err ===============================",  message);
         status = typeof status !== 'undefined' ? status : 400;
         if (typeof message === 'string') {
@@ -24,7 +24,7 @@ class Response {
         res.status(status).send(data);
     };
 
-    static returnData(res, data, key, status) {
+    static data(res, data, key, status) {
         status = typeof status !== 'undefined' ? status : 200;
         key = typeof key !== 'undefined' ? key : 'data';
         res.type('application/json');
@@ -35,13 +35,13 @@ class Response {
         res.status(status).send(newData);
     };
 
-    static returnRawData(res, data, status) {
+    static rawData(res, data, status) {
         status = typeof status !== 'undefined' ? status : 200;
         res.type('application/json');
         res.status(status).send(data);
     };
 
-    static returnPagingData(res, data, key, offset, limit, total, status) {
+    static pagingData(res, data, key, offset, limit, total, status) {
         status = typeof status !== 'undefined' ? status : 200;
         key = typeof key !== 'undefined' ? key : 'data';
         res.type('application/json');
